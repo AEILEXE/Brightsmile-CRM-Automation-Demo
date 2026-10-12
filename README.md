@@ -1,162 +1,156 @@
 # BrightSmile Dental Clinic — CRM & Workflow Automation Demo
 
-A portfolio project demonstrating CRM configuration, lead management, workflow automation, and process testing using GoHighLevel and Google Sheets.
+A CRM and workflow automation portfolio project built using **GoHighLevel** and **Google Sheets**. This fictional dental clinic demonstrates automated lead intake, conditional inquiry classification, priority tagging, opportunity management, incomplete-contact handling, and follow-up task configuration.
 
-> **Project type:** Fictional business demo  
-> **Status:** In progress — core CRM setup and initial workflow testing completed
+> **Project type:** Portfolio demonstration  
+> **Business:** Fictional dental clinic  
+> **CRM and automation:** GoHighLevel  
+> **Test documentation:** Google Sheets  
+> **Data:** Fictional test records
+
+---
 
 ## Project Overview
 
-BrightSmile Dental Clinic is a fictional dental clinic used to demonstrate how a small business can organize incoming inquiries, track potential patients, identify incomplete contact information, and create follow-up tasks.
+Dental clinics may receive inquiries with different service interests, incomplete contact information, and varying follow-up needs. Without structured workflows, these inquiries can be difficult to organize and prioritize.
 
-The goal is to build a structured CRM workflow that reduces manual organization, improves lead visibility, and helps staff manage inquiries more consistently.
+BrightSmile demonstrates how CRM automation can organize incoming inquiries, classify selected service requests, identify incomplete records, and create opportunities in a visual pipeline.
 
-This project is being developed as a hands-on portfolio demonstration of CRM setup, workflow logic, automation testing, and digital operations.
+The project focuses on workflow design, conditional logic, testing, execution-log analysis, and clear documentation of limitations.
 
-## Tools & Technologies
+## Project Objectives
 
-- **GoHighLevel (GHL):** CRM, inquiry form, opportunity pipeline, workflow automation, and task management
-- **Google Sheets:** Workflow documentation, sample lead tracking, and test-case records
-- **GitHub:** Project documentation and versioned portfolio evidence
+- Organize new inquiries through a CRM form and pipeline.
+- Apply tags to identify new and priority inquiries.
+- Use conditional branches to classify inquiry types.
+- Flag contacts with missing email addresses or phone numbers.
+- Create tasks for manual review and follow-up.
+- Verify workflow behavior using execution logs and fictional test contacts.
+- Document tested behavior and known limitations accurately.
 
-## Features Implemented
+## Tools Used
 
-### 1. Inquiry Form
+| Tool | Purpose |
+|---|---|
+| GoHighLevel | CRM, forms, workflow automation, contact tags, tasks, opportunities |
+| Google Sheets | Test data, workflow logic, test cases, and documentation |
 
-Created a BrightSmile Dental Inquiry Form with:
+## 1. New Lead Intake and Priority Classification
 
-- First name and last name
-- Email and phone number
-- Inquiry type selection
-- Required inquiry-consent checkbox
-- Optional marketing-consent checkbox
-- Form submission confirmation message
+**Trigger:** Form submitted — BrightSmile Dental Inquiry Form
 
-The form was tested in preview mode to confirm that submission is blocked when the required inquiry-consent checkbox is unchecked and allowed when marketing consent is left unchecked.
+The workflow applies the `brightsmile-new-inquiry` tag and evaluates the contact's selected inquiry type.
 
-These tests verify form behavior only; they do not establish legal compliance or verify marketing-message suppression.
+- **Braces Consultation:** Applies the `brightsmile-priority-review` tag and proceeds to opportunity creation.
+- **Other inquiry types:** Follow the default branch and proceed to opportunity creation without the priority tag.
 
-### 2. Lead Pipeline
+Duplicate-opportunity prevention is enabled to reduce duplicate open opportunities for the same contact.
 
-Configured a four-stage opportunity pipeline:
+### Workflow builder
+
+![New Lead Intake workflow builder](screenshots/01-new-lead-intake-builder.png)
+
+### Execution evidence
+
+The Jasmine Test execution log shows the classification branch, priority-tag action, and opportunity-creation action executed successfully.
+
+![New Lead Intake execution logs](screenshots/04-new-lead-intake-execution-logs.png)
+
+## 2. Missing Information Review
+
+**Trigger:** Form submitted — BrightSmile Dental Inquiry Form
+
+This workflow checks whether the email address or phone number is empty.
+
+- **If email or phone is missing:** Applies the `brightsmile-missing-info` tag and creates a review task.
+- **If neither field is missing:** Follows the default branch without applying the missing-information tag.
+
+The review task instructs the assigned user to inspect the inquiry, identify missing details, and update the contact record only when information can be verified.
+
+### Workflow builder
+
+![Missing Information Review workflow builder](screenshots/02-missing-information-builder.png)
+
+### Execution evidence
+
+Workflow test logs show the incomplete-information branch, tag action, and task action executing for a test contact. A separate workflow test also confirmed that a contact with both email and phone populated followed the default branch.
+
+![Missing Information Review execution logs](screenshots/05-missing-information-execution-logs.png)
+
+**Status:** Draft. The conditional behavior has been tested, but the workflow has not been verified as a complete live automation.
+
+## 3. CRM Opportunity Pipeline
+
+The BrightSmile pipeline organizes fictional opportunities across four stages:
 
 1. New Inquiry
 2. Contacted
 3. Appointment Booked
 4. Attended
 
-Opportunity outcomes, such as Won or Lost, are handled separately from the four pipeline stages.
+This visual pipeline provides a way to review inquiry progress and understand how CRM records are organized.
 
-The pipeline is intended to help staff track an inquiry from initial contact through appointment attendance.
+![BrightSmile CRM pipeline overview](screenshots/03-crm-pipeline-overview.png)
 
-### 3. New Lead Intake Workflow
+The pipeline contains sample opportunities created or organized during project testing. The number of records displayed should not be interpreted as the number of successfully automated test cases.
 
-**Status: Published**
+## 4. Follow-up Task Workflow
 
-Configured workflow components:
+A separate workflow is configured with a contact-tag trigger for `brightsmile-follow-up-needed`. Its action creates a task for the assigned user to review the inquiry, check follow-up status, and record the outcome.
 
-- Trigger: Form Submitted, filtered to the BrightSmile Dental Inquiry Form
-- Action: Apply the `brightsmile-new-inquiry` tag
-- Action: Create an opportunity in the New Inquiry stage
-- Duplicate-opportunity prevention: Enabled
+The task instructions caution against sending marketing messages unless valid consent has been confirmed.
 
-**Observed test results:**
+### Execution evidence
 
-- Live form submissions entered the workflow.
-- The new-inquiry tag action executed successfully.
-- An opportunity was created in a test run.
-- In a subsequent run, opportunity creation was skipped with the message: `Can not create duplicate opportunity for the contact.`
+The available logs show the task action executing during workflow testing.
 
-The observed results demonstrate the configured intake workflow and duplicate-opportunity protection in the tested scenarios. They do not establish that every possible duplicate-contact scenario is prevented.
+![Follow-up task workflow execution logs](screenshots/06-follow-up-execution-logs.png)
 
-### 4. Missing Information Review Workflow
+**Status:** Draft. The task action has been tested, but the full live tag-trigger-to-task process has not been verified end to end.
 
-**Status: Draft**
+## 5. Testing Summary
 
-Configured workflow components:
+Testing used fictional contacts and GoHighLevel execution logs.
 
-- Trigger: Form Submitted, filtered to the BrightSmile Dental Inquiry Form
-- Condition: Email is empty OR Phone is empty
-- Action on the matching branch: Apply the `brightsmile-missing-info` tag
+| Test area | Observed result |
+|---|---|
+| New inquiry tagging | Executed successfully in recorded tests |
+| Braces-priority condition | Matched the submitted inquiry type |
+| Priority tag application | Executed successfully for Jasmine Test |
+| Opportunity creation | Executed successfully in the Jasmine Test run |
+| Standard inquiry path | Default branch and opportunity creation observed in recorded tests |
+| Missing email or phone | Conditional branch, tag, and task actions executed in a workflow test |
+| Complete contact information | Default branch verified in a workflow test |
+| Follow-up task action | Task action executed in workflow testing |
+| Duplicate prevention | A repeated opportunity-creation action was skipped in a recorded test |
+| Full live follow-up workflow | Not yet verified end to end |
 
-Both the matching and non-matching branches were tested using GoHighLevel's workflow test feature.
+These results describe specific observed tests. They do not represent exhaustive testing of every possible scenario.
 
-The missing-phone scenario was verified. The missing-email scenario and automatic execution from a live form submission have not yet been verified.
+## 6. Consent and Data Handling
 
-### 5. Follow-up Reminder Workflow
+The demo form includes a required inquiry-contact consent checkbox and a separate optional marketing-consent checkbox.
 
-**Status: Draft**
+The form preview was tested to confirm that submission is blocked when required inquiry consent is unchecked and can proceed when inquiry consent is checked while optional marketing consent remains unchecked.
 
-Configured workflow components:
+This demonstrates form behavior only. It is **not proof of legal compliance or confirmation that every marketing workflow suppresses messages when consent is absent**.
 
-- Trigger: Contact Tag added
-- Trigger tag: `brightsmile-follow-up-needed`
-- Action: Create a follow-up task
-- Task assignment: Configured user account
-- Task timing: One day later at 9:00 AM, with weekend skipping disabled
+All portfolio examples use fictional records. No real patient data should be included in published screenshots or documentation.
 
-The task action executed successfully during a workflow test. The resulting task's title, description, assignment, and due date were inspected.
+## 7. Limitations and Future Improvements
 
-Automatic enrollment from a live tag change has not yet been verified.
-
-## Testing & Validation
-
-A Google Sheets test log documents 11 test cases, including:
-
-- Valid new lead submission
-- Repeat submission and duplicate-opportunity prevention
-- Missing contact information
-- Existing-contact submission
-- Opportunity stage changes
-- Follow-up task creation
-- Consent-related form validation
-- Workflow failure handling
-- Marketing-consent form behavior
-
-Testing distinguishes between successful observations, manually performed actions, workflow-test results, and scenarios that remain untested.
-
-Not all test cases are passed. Marketing-message suppression and genuine workflow failure handling remain unverified.
-
-## Current Limitations
-
-This is an evolving portfolio project. Current limitations include:
-
+- This is a portfolio demonstration, not a production deployment for a real clinic.
 - The Missing Information Review workflow remains in Draft.
-- The Follow-up Reminder workflow remains in Draft.
-- Live-trigger behavior for those two draft workflows has not been verified.
-- Marketing-message suppression when consent is absent or unknown has not been tested.
-- Genuine workflow failure handling has not been tested.
-- Additional reporting, integrations, and operational safeguards may be added in future iterations.
+- The Follow-up Task workflow remains in Draft, and its complete live trigger behavior is unverified.
+- An earlier assignment action produced an error when a contact was already assigned. The redundant assignment action was removed from the updated intake workflow.
+- Duplicate-opportunity prevention has been observed in specific executions but has not been exhaustively tested.
+- Consent-related behavior has not undergone a full legal or end-to-end marketing-suppression review.
+- Future improvements could include reporting dashboards, stronger error handling, and AI-assisted inquiry classification.
 
-## Planned Enhancements
+## What This Project Demonstrates
 
-The next development phase may include:
+This project demonstrates practical CRM configuration, conditional workflow design, contact tagging, opportunity management, task automation, execution-log analysis, and test documentation.
 
-- More complete lead-routing and follow-up logic
-- Better handling of missing information and unsuccessful workflow actions
-- Appointment-related automation and follow-up processes
-- CRM reporting and performance dashboards
-- API or webhook integration, if supported by the chosen tools and implemented
-- Additional test cases and stronger end-to-end validation
-- Sanitized screenshots and supporting technical documentation
+It also demonstrates the importance of distinguishing a configured workflow from a verified outcome and documenting limitations transparently.
 
-Planned enhancements will be documented as they are implemented and tested.
-
-## Project Documentation
-
-Supporting materials will be added as the project develops:
-
-- Workflow logic documentation
-- Test-case records
-- Selected screenshots of the actual GoHighLevel configuration
-- Updated implementation notes and test results
-
-## Disclaimer
-
-BrightSmile Dental Clinic is a fictional business created for educational and portfolio purposes. Contact records and examples are demonstration data, not real patient records.
-
-This project demonstrates CRM configuration and workflow automation. It is not a production-ready clinical system, and it does not claim legal or regulatory compliance.
-
----
-
-**Project focus:** CRM Setup · Workflow Automation · Lead Management · Process Testing · Digital Operations
+**BrightSmile Dental Clinic is a fictional portfolio project.** It is not affiliated with or deployed for a real dental clinic.
